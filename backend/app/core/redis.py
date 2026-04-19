@@ -12,3 +12,8 @@ redis_client = redis.Redis(
     password=settings.REDIS_PASSWORD,
 )
 
+success = redis_client.set('foo', 'bar')
+# True
+
+result = redis_client.get('foo')
+print(result)
