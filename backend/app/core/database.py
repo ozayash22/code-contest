@@ -8,7 +8,7 @@ DATABASE_URL = (
     f"{settings.MYSQL_PORT}/{settings.MYSQL_DB}"
 )
 
-engine = create_engine(DATABASE_URL, pool_pre_ping=True)
+engine = create_engine(DATABASE_URL, pool_pre_ping=True, echo=True)
 
 SessionLocal = sessionmaker(
     autocommit=False,
