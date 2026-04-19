@@ -3,9 +3,15 @@ from app.core.config import settings
 from app.core.redis import redis_client
 from app.api.auth import router as auth_router
 from app.api.contests import router as contest_router
+from app.api.problems import router as problem_router
+from app.api.test_cases import router as tc_router
+from app.api.submissions import router as submission_router
 from app.core.database import Base, engine
 from app.models.user import User
 from app.models.contest import Contest
+from app.models.problem import Problem
+from app.models.test_case import TestCase
+from app.models.submission import Submission
 
 
 async def lifespan(app: FastAPI):
@@ -25,6 +31,9 @@ app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
 
 app.include_router(auth_router)
 app.include_router(contest_router)
+app.include_router(problem_router)
+app.include_router(tc_router)
+app.include_router(submission_router)
 
 
 @app.get("/")
