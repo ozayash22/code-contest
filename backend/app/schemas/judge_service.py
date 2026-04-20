@@ -56,7 +56,7 @@ def run_python(code: str, input_data: str, timeout_sec=2):
         }
 
 
-def judge_submission(code, language, problem_id, db: Session):
+def judge_submission(problem_id, language, code, db: Session):
 
     if language != "python":
         return {
