@@ -6,6 +6,7 @@ from app.api.contests import router as contest_router
 from app.api.problems import router as problem_router
 from app.api.test_cases import router as tc_router
 from app.api.submissions import router as submission_router
+from app.api.leaderboard import router as leaderboard_router
 from app.core.database import Base, engine
 from app.models.user import User
 from app.models.contest import Contest
@@ -34,6 +35,7 @@ app.include_router(contest_router)
 app.include_router(problem_router)
 app.include_router(tc_router)
 app.include_router(submission_router)
+app.include_router(leaderboard_router)
 
 
 @app.get("/")

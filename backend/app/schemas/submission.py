@@ -14,5 +14,9 @@ class SubmissionResponseSchema(BaseModel):
     status: str
     runtime: float
 
+    passed_count: int = 0
+    failed_count: int = 0
+    total_tests: int = 0
+
     class Config:
         from_attributes = True

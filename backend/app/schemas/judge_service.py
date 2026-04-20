@@ -1,100 +1,100 @@
-import os
-import uuid
-import time
-import subprocess
+# import os
+# import uuid
+# import time
+# import subprocess
 
-from sqlalchemy.orm import Session
-from app.models.test_case import TestCase
-
-
-TEMP_DIR = "/tmp/codecontest"
+# from sqlalchemy.orm import Session
+# from app.models.test_case import TestCase
 
 
-def run_python(code: str, input_data: str, timeout_sec=2):
-    os.makedirs(TEMP_DIR, exist_ok=True)
-
-    uid = str(uuid.uuid4())
-    folder = f"{TEMP_DIR}/{uid}"
-
-    os.makedirs(folder)
-
-    file_path = f"{folder}/main.py"
-
-    with open(file_path, "w") as f:
-        f.write(code)
-
-    start = time.time()
-
-    try:
-        result = subprocess.run(
-            [
-                "docker", "run",
-                "--rm",
-                "--network", "none",
-                "--memory", "128m",
-                "--cpus", "0.5",
-                "-v", f"{folder}:/code",
-                "codejudge-python"
-            ],
-            input=input_data,
-            text=True,
-            capture_output=True,
-            timeout=timeout_sec
-        )
-
-        runtime = round(time.time() - start, 3)
-
-        return {
-            "stdout": result.stdout.strip(),
-            "stderr": result.stderr.strip(),
-            "runtime": runtime
-        }
-
-    except subprocess.TimeoutExpired:
-        return {
-            "timeout": True
-        }
+# TEMP_DIR = "/tmp/codecontest"
 
 
-def judge_submission(problem_id, language, code, db: Session):
+# def run_python(code: str, input_data: str, timeout_sec=2):
+#     os.makedirs(TEMP_DIR, exist_ok=True)
 
-    if language != "python":
-        return {
-            "status": "LANGUAGE_NOT_SUPPORTED",
-            "runtime": 0
-        }
+#     uid = str(uuid.uuid4())
+#     folder = f"{TEMP_DIR}/{uid}"
 
-    tests = db.query(TestCase).filter(
-        TestCase.problem_id == problem_id
-    ).all()
+#     os.makedirs(folder)
 
-    max_runtime = 0
+#     file_path = f"{folder}/main.py"
 
-    for tc in tests:
+#     with open(file_path, "w") as f:
+#         f.write(code)
 
-        result = run_python(code, tc.input_data)
+#     start = time.time()
 
-        if result.get("timeout"):
-            return {
-                "status": "TIME_LIMIT_EXCEEDED",
-                "runtime": max_runtime
-            }
+#     try:
+#         result = subprocess.run(
+#             [
+#                 "docker", "run",
+#                 "--rm",
+#                 "--network", "none",
+#                 "--memory", "128m",
+#                 "--cpus", "0.5",
+#                 "-v", f"{folder}:/code",
+#                 "codejudge-python"
+#             ],
+#             input=input_data,
+#             text=True,
+#             capture_output=True,
+#             timeout=timeout_sec
+#         )
 
-        if result["stderr"]:
-            return {
-                "status": "RUNTIME_ERROR",
-                "runtime": max_runtime
-            }
+#         runtime = round(time.time() - start, 3)
 
-        max_runtime = max(max_runtime, result["runtime"])
+#         return {
+#             "stdout": result.stdout.strip(),
+#             "stderr": result.stderr.strip(),
+#             "runtime": runtime
+#         }
 
-        if result["stdout"] != tc.expected_output.strip():
-            return {
-                "status": "WRONG_ANSWER",
-                "runtime": max_runtime
-            }
+#     except subprocess.TimeoutExpired:
+#         return {
+#             "timeout": True
+#         }
 
-    return {
-        "status": "ACCEPTED",
-        "runtime": max_runtime
-    }
+
+# def judge_submission(problem_id, language, code, db: Session):
+
+#     if language != "python":
+#         return {
+#             "status": "LANGUAGE_NOT_SUPPORTED",
+#             "runtime": 0
+#         }
+
+#     tests = db.query(TestCase).filter(
+#         TestCase.problem_id == problem_id
+#     ).all()
+
+#     max_runtime = 0
+
+#     for tc in tests:
+
+#         result = run_python(code, tc.input_data)
+
+#         if result.get("timeout"):
+#             return {
+#                 "status": "TIME_LIMIT_EXCEEDED",
+#                 "runtime": max_runtime
+#             }
+
+#         if result["stderr"]:
+#             return {
+#                 "status": "RUNTIME_ERROR",
+#                 "runtime": max_runtime
+#             }
+
+#         max_runtime = max(max_runtime, result["runtime"])
+
+#         if result["stdout"] != tc.expected_output.strip():
+#             return {
+#                 "status": "WRONG_ANSWER",
+#                 "runtime": max_runtime
+#             }
+
+#     return {
+#         "status": "ACCEPTED",
+#         "runtime": max_runtime
+#     }
