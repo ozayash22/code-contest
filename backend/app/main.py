@@ -12,6 +12,7 @@ from app.models.contest import Contest
 from app.models.problem import Problem
 from app.models.test_case import TestCase
 from app.models.submission import Submission
+from fastapi.middleware.cors import CORSMiddleware
 
 
 async def lifespan(app: FastAPI):
@@ -27,7 +28,15 @@ async def lifespan(app: FastAPI):
         pass
 
 
-app = FastAPI(title=settings.APP_NAME, lifespan=lifespan)
+app = FastAPI(title="CodeContest")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(auth_router)
 app.include_router(contest_router)

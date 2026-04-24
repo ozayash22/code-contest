@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from slugify import slugify
-
 from app.core.database import get_db
 from app.models.problem import Problem
 from app.models.contest import Contest
@@ -12,7 +11,6 @@ from app.schemas.problem import (
 from app.api.deps import admin_required
 
 router = APIRouter(prefix="/api/problems", tags=["Problems"])
-
 
 @router.post("/", response_model=ProblemResponseSchema)
 def create_problem(
@@ -58,3 +56,16 @@ def get_contest_problems(
     return db.query(Problem).filter(
         Problem.contest_id == contest_id
     ).all()
+
+@router.get("/{problem_id}",
+response_model=ProblemResponseSchema)
+def get_problem(problem_id: int,
+db: Session = Depends(get_db)):
+    problem = db.query(Problem).filter(
+        Problem.id == problem_id
+    ).first()
+
+    if not problem:
+        raise HTTPException(404, "Problem not found")
+
+    return problem
