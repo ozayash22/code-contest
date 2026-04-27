@@ -1,23 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
 import "./index.css";
-import LoginPage from "./pages/LoginPage";
-import ContestPage from "./pages/ContestPage";
-import ContestDetailsPage from "./pages/ContestDetailsPage";
-import ProblemSolvePage from "./pages/ProblemSolvePage";
+
+import App from "./App";
+import { AuthProvider } from "./context/AuthContext";
 
 ReactDOM.createRoot(
   document.getElementById("root")!
 ).render(
-  <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<ContestPage />} />
-      <Route path="/login" element={<LoginPage />} />
-    </Routes>
-  </BrowserRouter>
+  <React.StrictMode>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
+  </React.StrictMode>
 );
