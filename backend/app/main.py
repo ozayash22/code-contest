@@ -45,6 +45,7 @@ app.include_router(problem_router)
 app.include_router(tc_router)
 app.include_router(submission_router)
 app.include_router(leaderboard_router)
+app.include_router(ws_router)
 
 
 @app.get("/")
